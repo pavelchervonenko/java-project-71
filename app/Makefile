@@ -4,4 +4,10 @@ run-dist:
 clean:
 	./gradlew clean
 
-.PHONY: run-dist clean
+build-dist:
+	./gradlew installDist
+
+install: clean build-dist
+
+
+.PHONY: run-dist clean build-dist
