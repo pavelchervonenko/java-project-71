@@ -1,6 +1,5 @@
 package hexlet.code;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -14,6 +13,7 @@ import java.nio.file.Paths;
 import java.nio.file.Files;
 
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
 @Command(name = "gendiff",
@@ -48,14 +48,31 @@ class App implements Callable<Integer> {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        Map<String, Object> dataFirst = objectMapper.readValue(absolutePathFirst.toFile(), new TypeReference<Map<String, Object>>(){});
-        Map<String, Object> dataSecond = objectMapper.readValue(absolutePathSecond.toFile(), new TypeReference<Map<String, Object>>(){});
+        Map<String, Object> dataFirst = objectMapper.readValue(
+                absolutePathFirst.toFile(),
+                new TypeReference<Map<String, Object>>(){});
+        Map<String, Object> dataSecond = objectMapper.readValue(
+                absolutePathSecond.toFile(),
+                new TypeReference<Map<String, Object>>(){});
 
-        System.out.println(dataFirst);
-        System.out.println(dataSecond);
+        Differ.generate(dataFirst, dataSecond);
+//        System.out.println(dataFirst);
+//        System.out.println(dataSecond);
+//        compare(dataFirst, dataSecond);
 
         return 0;
     }
+
+//    public static void compare(Map<String, Object> dataFirst, Map<String, Object> dataSecond) {
+//        Map<String, Object> sortedDataFirst = new TreeMap<>();
+//        sortedDataFirst.putAll(dataFirst);
+//
+//        Map<String, Object> sortedDataSecond = new TreeMap<>();
+//        sortedDataSecond.putAll(dataSecond);
+//
+//        System.out.println(sortedDataFirst);
+//        System.out.println(sortedDataSecond);
+//    }
 
     public static void main(String... args) {
         int exitCode = new CommandLine(new App()).execute(args);
