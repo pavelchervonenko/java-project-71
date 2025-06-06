@@ -1,4 +1,4 @@
-run-dist:
+run:
 	./build/install/app/bin/app
 
 run-test:
@@ -7,10 +7,10 @@ run-test:
 clean:
 	./gradlew clean
 
-build-dist:
+build:
 	./gradlew installDist
 
-install: clean build-dist
+install: clean build
 
 
-.PHONY: run-dist clean build-dist run-test
+.PHONY: run clean run-test build
