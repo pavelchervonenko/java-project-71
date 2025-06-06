@@ -36,6 +36,7 @@ sonar {
         property("sonar.organization", "pavelchervonenko")
         property("sonar.host.url", "https://sonarcloud.io")
     }
+}
 
 tasks.test {
     useJUnitPlatform()
