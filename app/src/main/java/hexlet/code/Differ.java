@@ -24,16 +24,13 @@ public class Differ {
             if (keyInFirst && keyInSecond) {
                 if (valueInFirst.equals(valueInSecond)) {
                     result.add("    " + key + ": " + valueInFirst);
-                }
-                else {
+                } else {
                     result.add("  - " + key + ": " + valueInFirst);
                     result.add("  + " + key + ": " + valueInSecond);
                 }
-            }
-            else if (keyInFirst) {
+            } else if (keyInFirst) {
                 result.add("  - " + key + ": " + valueInFirst);
-            }
-            else if (keyInSecond) {
+            } else if (keyInSecond) {
                 result.add("  + " + key + ": " + valueInSecond);
             }
         }

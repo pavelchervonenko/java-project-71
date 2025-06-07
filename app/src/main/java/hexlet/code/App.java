@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import java.nio.file.Files;
 
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
 @Command(name = "gendiff",
@@ -50,10 +49,10 @@ class App implements Callable<Integer> {
 
         Map<String, Object> dataFirst = objectMapper.readValue(
                 absolutePathFirst.toFile(),
-                new TypeReference<Map<String, Object>>(){});
+                new TypeReference<Map<String, Object>>() { });
         Map<String, Object> dataSecond = objectMapper.readValue(
                 absolutePathSecond.toFile(),
-                new TypeReference<Map<String, Object>>(){});
+                new TypeReference<Map<String, Object>>() { });
 
         Differ.generate(dataFirst, dataSecond);
 //        System.out.println(dataFirst);
