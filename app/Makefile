@@ -13,8 +13,10 @@ installDist:
 report:
 	./gradlew jacocoTestReport
 
+sonar:
+	./gradlew sonar --info
+
 clean:
 	./gradlew clean
 
-
-PHONY: run run-test build installDist clean
+PHONY: run run-test build installDist sonar clean
