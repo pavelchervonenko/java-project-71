@@ -19,9 +19,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Execute Gradle build
-        run: cd app && make build
+        run: cd app && ./gradlew build
       - name: Generate coverage report
-        run: cd app && make report
+        run: cd app && ./gradlew jacocoTestReport
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -37,4 +37,4 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: cd app && make sonar
+        run: cd app && ./gradlew sonar --info
