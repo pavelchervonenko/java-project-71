@@ -3,10 +3,11 @@ package hexlet.code;
 import java.util.Map;
 import java.util.LinkedList;
 import java.util.TreeSet;
+import java.util.List;
 
 
 public class Differ {
-    public static void generate(Map<String, Object> dataFirst, Map<String, Object> dataSecond) {
+    public static List<String> generate(Map<String, Object> dataFirst, Map<String, Object> dataSecond) {
         var allKeys = new TreeSet<>();
 
         allKeys.addAll(dataFirst.keySet());
@@ -34,6 +35,6 @@ public class Differ {
                 result.add("  + " + key + ": " + valueInSecond);
             }
         }
-        System.out.println(String.join("\n", result));
+        return result;
     }
 }

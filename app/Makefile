@@ -7,6 +7,9 @@ run-test:
 build:
 	./gradlew build
 
+test:
+	./gradlew test
+
 installDist:
 	./gradlew installDist
 

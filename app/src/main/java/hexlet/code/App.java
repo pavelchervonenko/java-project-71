@@ -54,24 +54,10 @@ class App implements Callable<Integer> {
                 absolutePathSecond.toFile(),
                 new TypeReference<Map<String, Object>>() { });
 
-        Differ.generate(dataFirst, dataSecond);
-//        System.out.println(dataFirst);
-//        System.out.println(dataSecond);
-//        compare(dataFirst, dataSecond);
-
+        var lines = Differ.generate(dataFirst, dataSecond);
+        System.out.println(String.join("\n", lines));
         return 0;
     }
-
-//    public static void compare(Map<String, Object> dataFirst, Map<String, Object> dataSecond) {
-//        Map<String, Object> sortedDataFirst = new TreeMap<>();
-//        sortedDataFirst.putAll(dataFirst);
-//
-//        Map<String, Object> sortedDataSecond = new TreeMap<>();
-//        sortedDataSecond.putAll(dataSecond);
-//
-//        System.out.println(sortedDataFirst);
-//        System.out.println(sortedDataSecond);
-//    }
 
     public static void main(String... args) {
         int exitCode = new CommandLine(new App()).execute(args);
