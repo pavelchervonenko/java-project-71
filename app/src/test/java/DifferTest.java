@@ -36,7 +36,28 @@ class DifferTest {
                 + "  + verbose: true";
 
         assertEquals(List.of(expected.split("\n")), diff);
+    }
 
+    @Test
+    void testFirstEmpty() throws Exception {
+        Map<String, Object> data1 = Map.of();
+        Map<String, Object> data2 = Map.of("key", "value");
+
+        List<String> diff = Differ.generate(data1, data2);
+
+        String expected =
+                "  + key: val\n";
+
+        assertEquals(List.of(expected), diff);
+    }
+
+    @Test
+    void testBothEmpty() throws Exception {
+        Map<String, Object> data1 = Map.of();
+        Map<String, Object> data2 = Map.of();
+
+        List<String> diff = Differ.generate(data1, data2);
+
+        assertEquals(List.of(), diff);
     }
 }
-
