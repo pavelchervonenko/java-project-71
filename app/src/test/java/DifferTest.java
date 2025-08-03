@@ -46,7 +46,7 @@ class DifferTest {
         List<String> diff = Differ.generate(data1, data2);
 
         String expected =
-                "  + key: val\n";
+                "  + key: value\n";
 
         assertEquals(List.of(expected), diff);
     }
