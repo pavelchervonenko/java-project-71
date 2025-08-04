@@ -45,14 +45,8 @@ class App implements Callable<Integer> {
             throw new Exception("File '" + absolutePathSecond + "' does not exist");
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        Map<String, Object> dataFirst = objectMapper.readValue(
-                absolutePathFirst.toFile(),
-                new TypeReference<Map<String, Object>>() { });
-        Map<String, Object> dataSecond = objectMapper.readValue(
-                absolutePathSecond.toFile(),
-                new TypeReference<Map<String, Object>>() { });
+        Map<String, Object> dataFirst = Parser.parse(absolutePathFirst);
+        Map<String, Object> dataSecond = Parser.parse(absolutePathSecond);
 
         var lines = Differ.generate(dataFirst, dataSecond);
         System.out.println(String.join("\n", lines));
