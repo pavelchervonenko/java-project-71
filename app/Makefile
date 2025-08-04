@@ -1,8 +1,11 @@
 run:
 	./build/install/app/bin/app
 
-run-test:
+test-json:
 	./build/install/app/bin/app ./src/test/resources/file1.json ./src/test/resources/file2.json
+
+test-yaml:
+	./build/install/app/bin/app ./src/test/resources/file1.yaml ./src/test/resources/file2.yaml
 
 build:
 	./gradlew build
