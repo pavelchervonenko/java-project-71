@@ -22,7 +22,7 @@ public class Parser {
             throw new IOException("The format is not supported");
         }
 
-        return mapper.readValue(path.toFile(), new TypeReference<>() {});
+        return mapper.readValue(path.toFile(), new TypeReference<>() { });
     }
 
 }

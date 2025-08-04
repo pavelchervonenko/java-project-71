@@ -25,9 +25,9 @@ class DifferTest {
         mapper = new ObjectMapper();
 
         Map<String, Object> data1 = mapper.readValue(path1.toFile(),
-                new TypeReference<>() {});
+                new TypeReference<>() { });
         Map<String, Object> data2 = mapper.readValue(path2.toFile(),
-                new TypeReference<>() {});
+                new TypeReference<>() { });
 
         List<String> diff = Differ.generate(data1, data2);
 
@@ -38,6 +38,31 @@ class DifferTest {
                 + "  - timeout: 50\n"
                 + "  + timeout: 20\n"
                 + "  + verbose: true";
+
+        assertEquals(List.of(expected.split("\n")), diff);
+    }
+
+    @Test
+    void testComparisonYaml() throws Exception {
+        var path1 = Path.of("src/test/resources/file1.yaml");
+        var path2 = Path.of("src/test/resources/file2.yaml");
+
+        mapper = new YAMLMapper();
+
+        Map<String, Object> data1 = mapper.readValue(path1.toFile(),
+                new TypeReference<>() { });
+        Map<String, Object> data2 = mapper.readValue(path2.toFile(),
+                new TypeReference<>() { });
+
+        List<String> diff = Differ.generate(data1, data2);
+
+        String expected =
+                "  - follow: false\n"
+                        + "    host: hexlet.io\n"
+                        + "  - proxy: 123.234.53.22\n"
+                        + "  - timeout: 50\n"
+                        + "  + timeout: 20\n"
+                        + "  + verbose: true";
 
         assertEquals(List.of(expected.split("\n")), diff);
     }
@@ -65,28 +90,5 @@ class DifferTest {
         assertEquals(List.of(), diff);
     }
 
-    @Test
-    void testComparisonYaml() throws Exception {
-        var path1 = Path.of("src/test/resources/file1.yaml");
-        var path2 = Path.of("src/test/resources/file2.yaml");
 
-        mapper = new YAMLMapper();
-
-        Map<String, Object> data1 = mapper.readValue(path1.toFile(),
-                new TypeReference<>() {});
-        Map<String, Object> data2 = mapper.readValue(path2.toFile(),
-                new TypeReference<>() {});
-
-        List<String> diff = Differ.generate(data1, data2);
-
-        String expected =
-                "  - follow: false\n"
-                        + "    host: hexlet.io\n"
-                        + "  - proxy: 123.234.53.22\n"
-                        + "  - timeout: 50\n"
-                        + "  + timeout: 20\n"
-                        + "  + verbose: true";
-
-        assertEquals(List.of(expected.split("\n")), diff);
-    }
 }
