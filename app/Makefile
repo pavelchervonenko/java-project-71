@@ -7,6 +7,12 @@ test-json:
 test-yaml:
 	./build/install/app/bin/app ./src/test/resources/file1.yaml ./src/test/resources/file2.yaml
 
+test-nested-json:
+	./build/install/app/bin/app ./src/test/resources/nested_file1.json ./src/test/resources/nested_file2.json
+
+test-nested-yaml:
+	./build/install/app/bin/app ./src/test/resources/nested_file1.yaml ./src/test/resources/nested_file2.yaml
+
 build:
 	./gradlew build
 
@@ -25,4 +31,4 @@ sonar:
 clean:
 	./gradlew clean
 
-PHONY: run run-test build installDist sonar clean
+PHONY: build
