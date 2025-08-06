@@ -1,39 +1,47 @@
 package hexlet.code;
 
 import java.util.Map;
-import java.util.LinkedList;
-import java.util.TreeSet;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.TreeSet;
+import java.util.Objects;
+import java.util.HashMap;
 
 
 public class Differ {
-    public static List<String> generate(Map<String, Object> dataFirst, Map<String, Object> dataSecond) {
+    public static List<Map<String, Object>> generate(Map<String, Object> dataFirst, Map<String, Object> dataSecond) {
         var allKeys = new TreeSet<>();
 
         allKeys.addAll(dataFirst.keySet());
         allKeys.addAll(dataSecond.keySet());
 
-        var result = new LinkedList<String>();
+        var result = new ArrayList<Map<String, Object>>();
 
         for (var key: allKeys) {
             boolean keyInFirst = dataFirst.containsKey(key);
             boolean keyInSecond = dataSecond.containsKey(key);
 
-            var valueInFirst = dataFirst.get(key);
-            var valueInSecond = dataSecond.get(key);
+            Object valueInFirst = dataFirst.get(key);
+            Object valueInSecond = dataSecond.get(key);
 
-            if (keyInFirst && keyInSecond) {
-                if (valueInFirst.equals(valueInSecond)) {
-                    result.add("    " + key + ": " + valueInFirst);
-                } else {
-                    result.add("  - " + key + ": " + valueInFirst);
-                    result.add("  + " + key + ": " + valueInSecond);
-                }
-            } else if (keyInFirst) {
-                result.add("  - " + key + ": " + valueInFirst);
-            } else if (keyInSecond) {
-                result.add("  + " + key + ": " + valueInSecond);
+            Map<String, Object> entry = new HashMap<>();
+            entry.put("key", key);
+
+            if (keyInFirst && !keyInSecond) {
+                entry.put("status", "removed");
+                entry.put("oldValue", valueInFirst);
+            } else if (!keyInFirst && keyInSecond) {
+                entry.put("status", "added");
+                entry.put("newValue", valueInSecond);
+            } else if (Objects.equals(valueInSecond, valueInFirst)) {
+                entry.put("status", "unchanged");
+                entry.put("oldValue", valueInFirst);
+            } else {
+                entry.put("status", "changed");
+                entry.put("oldValue", valueInFirst);
+                entry.put("newValue", valueInSecond);
             }
+            result.add(entry);
         }
         return result;
     }
