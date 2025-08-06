@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -26,7 +27,8 @@ class App implements Callable<Integer> {
     private String filepathSecond;
 
     @Option(names = {"-f", "--format"},
-            description = "output format [default: stylish]")
+            description = "output format [default: stylish]",
+            defaultValue = "stylish")
     private String format;
 
 
@@ -45,8 +47,10 @@ class App implements Callable<Integer> {
         Map<String, Object> dataFirst = Parser.parse(absolutePathFirst);
         Map<String, Object> dataSecond = Parser.parse(absolutePathSecond);
 
-        var lines = Differ.generate(dataFirst, dataSecond);
-        System.out.println(String.join("\n", lines));
+        List<Map<String, Object>> diff = Differ.generate(dataFirst, dataSecond);
+
+        Formatter formatter = FormatterFactory.get(format);
+        System.out.println(formatter.format(diff));
         return 0;
     }
 
