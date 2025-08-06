@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.util.Map;
 
 public class Parser {
-
     public static Map<String, Object> parse(Path path) throws IOException {
         String filename = path.getFileName().toString();
         ObjectMapper mapper;
@@ -24,5 +23,4 @@ public class Parser {
 
         return mapper.readValue(path.toFile(), new TypeReference<>() { });
     }
-
 }
