@@ -5,8 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import hexlet.code.formatters.PlainFormatter;
+import hexlet.code.formatters.StylishFormatter;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 import java.util.HashMap;
@@ -131,6 +134,43 @@ class DifferTest {
                 + "  - setting: null\n"
                 + "  + setting: 123\n"
                 + "}";
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testCompareJsonPlain() throws IOException {
+        var path1 = Path.of("src/test/resources/nested_file1.json");
+        var path2 = Path.of("src/test/resources/nested_file2.json");
+
+        mapper = new ObjectMapper();
+
+        Map<String, Object> data1 = mapper.readValue(path1.toFile(),
+                new TypeReference<>() { });
+        Map<String, Object> data2 = mapper.readValue(path2.toFile(),
+                new TypeReference<>() { });
+
+        List<Map<String, Object>> diff = Differ.generate(data1, data2);
+
+        Formatter formatter = new PlainFormatter();
+        String actual = formatter.format(diff);
+
+        String expected =
+                "\n"
+                + "Property 'chars2' was updated. From [complex value] to false\n"
+                + "Property 'checked' was updated. From false to true\n"
+                + "Property 'default' was updated. From null to [complex value]\n"
+                + "Property 'id' was updated. From 45 to null\n"
+                + "Property 'key1' was removed\n"
+                + "Property 'key2' was added with value: 'value2'\n"
+                + "Property 'numbers2' was updated. From [complex value] to [complex value]\n"
+                + "Property 'numbers3' was removed\n"
+                + "Property 'numbers4' was added with value: [complex value]\n"
+                + "Property 'obj1' was added with value: [complex value]\n"
+                + "Property 'setting1' was updated. From 'Some value' to 'Another value'\n"
+                + "Property 'setting2' was updated. From 200 to 300\n"
+                + "Property 'setting3' was updated. From true to 'none'"
+                + "\n";
 
         assertEquals(expected, actual);
     }
