@@ -34,16 +34,29 @@ public class PlainFormatter implements Formatter {
         return result.toString();
     }
 
+    private String formatLine(Object key) {
+        return "Property "
+                + createQuotationMarks(key)
+                + " was removed"
+                + "\n";
+    }
+
     private String formatLine(Object key, Object value) {
-        return "Property " + createQuotationMarks(key) + " was added with value: " + processingValue(value) + "\n";
+        return "Property "
+                + createQuotationMarks(key)
+                + " was added with value: "
+                + processingValue(value)
+                + "\n";
     }
 
     private String formatLine(Object key, Object oldValue, Object newValue) {
-        return "Property " + createQuotationMarks(key) + " was updated. From " + processingValue(oldValue) + " to " + processingValue(newValue) + "\n";
-    }
-
-    private String formatLine(Object key) {
-        return "Property " + createQuotationMarks(key) + " was removed" + "\n";
+        return "Property "
+                + createQuotationMarks(key)
+                + " was updated. From "
+                + processingValue(oldValue)
+                + " to "
+                + processingValue(newValue)
+                + "\n";
     }
 
     private String processingValue(Object obj) {
