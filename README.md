@@ -1,6 +1,7 @@
 [![Actions Status](https://github.com/pavelchervonenko/java-project-71/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/pavelchervonenko/java-project-71/actions)[![Java CI](https://github.com/pavelchervonenko/java-project-71/actions/workflows/main.yml/badge.svg)](https://github.com/pavelchervonenko/java-project-71/actions/workflows/main.yml)[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pavelchervonenko_java-project-71&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pavelchervonenko_java-project-71)
 
-## Примеры работы с выводом формата *stylish* `(-f=stylish) or without a flag`
+## Примеры работы с выводом формата *stylish* 
+### `(-f=stylish) or without a flag`
 
 ### Пример работы с Json:
 [![asciicast](https://asciinema.org/a/A8yELSWxQzSR1RaAHVrPgEZyu.svg)](https://asciinema.org/a/A8yELSWxQzSR1RaAHVrPgEZyu)
@@ -14,7 +15,8 @@
 ### Пример работы с вложенным YAML:
 [![asciicast](https://asciinema.org/a/NmgarT5PukXRO5T8FnZEvU1m4.svg)](https://asciinema.org/a/NmgarT5PukXRO5T8FnZEvU1m4)
 
-## Примеры работы с выводом формата *plain* `(-f=plain)` 
+## Примеры работы с выводом формата *plain* 
+### `(-f=plain)` 
 
 ### Пример работы с вложенным Json:
 [![asciicast](https://asciinema.org/a/toj2QVygYMoZqZQIjOleRJQ7h.svg)](https://asciinema.org/a/toj2QVygYMoZqZQIjOleRJQ7h)
