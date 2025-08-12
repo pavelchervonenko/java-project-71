@@ -5,6 +5,7 @@
 
 ## Описание
 Вычислитель отличий – программа, определяющая разницу между двумя структурами данных.
+
 Возможности утилиты:
 - Поддержка разных входных форматов: *.yaml* и *.json*
 - Генерация отчета в виде *plain text*, *stylish* и *json*
@@ -12,7 +13,7 @@
 ## Примеры использования:
 
 - ### Генерация отчета в виде *stylish*: 
-#### `(-f=stylish) or without a flag`
+##### `(-f=stylish) or without a flag`
 
 #### Json
 [![asciicast](https://asciinema.org/a/A8yELSWxQzSR1RaAHVrPgEZyu.svg)](https://asciinema.org/a/A8yELSWxQzSR1RaAHVrPgEZyu)
@@ -27,10 +28,10 @@
 [![asciicast](https://asciinema.org/a/NmgarT5PukXRO5T8FnZEvU1m4.svg)](https://asciinema.org/a/NmgarT5PukXRO5T8FnZEvU1m4)
 
 - ### Генерация отчета в виде *plain*: 
-#### `(-f=plain)` 
+##### `(-f=plain)` 
 
 #### Вложенный Json
 [![asciicast](https://asciinema.org/a/toj2QVygYMoZqZQIjOleRJQ7h.svg)](https://asciinema.org/a/toj2QVygYMoZqZQIjOleRJQ7h)
 
 - ### Генерация отчета в виде *json*:
-#### (-f=json)
+##### (-f=json)
