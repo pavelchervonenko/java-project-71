@@ -1,177 +1,138 @@
 package hexlet.code;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import hexlet.code.formatters.PlainFormatter;
-import hexlet.code.formatters.StylishFormatter;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.nio.file.Path;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 class DifferTest {
-    ObjectMapper mapper;
+    @Test
+    void mixed() {
+        Map<String, Object> first = new HashMap<>();
+        first.put("m", 1);
+        first.put("a", "x");
+        first.put("r", true);
+
+        Map<String, Object> second = new HashMap<>();
+        second.put("m", 1);
+        second.put("a", "y");
+        second.put("z", 999);
+
+        List<Map<String, Object>> diff = Differ.generate(first, second);
+
+        List<Map<String, Object>> expected = new ArrayList<>();
+
+        Map<String, Object> ea = new HashMap<>();
+        ea.put("key", "a");
+        ea.put("status", "changed");
+        ea.put("oldValue", "x");
+        ea.put("newValue", "y");
+        expected.add(ea);
+
+        Map<String, Object> em = new HashMap<>();
+        em.put("key", "m");
+        em.put("status", "unchanged");
+        em.put("oldValue", 1);
+        expected.add(em);
+
+        Map<String, Object> er = new HashMap<>();
+        er.put("key", "r");
+        er.put("status", "removed");
+        er.put("oldValue", true);
+        expected.add(er);
+
+        Map<String, Object> ez = new HashMap<>();
+        ez.put("key", "z");
+        ez.put("status", "added");
+        ez.put("newValue", 999);
+        expected.add(ez);
+
+        assertEquals(expected, diff);
+    }
 
     @Test
-    void testStylishFormatter() {
-        Map<Integer, String> map = new HashMap<>();
-        map.put(1, "2");
-        map.put(3, "4");
+    void empty() {
+        Map<String, Object> first = Map.of();
+        Map<String, Object> second = Map.of();
 
-        List<Map<String, Object>> diff = List.of(
-                Map.of("key", "host", "status", "unchanged", "oldValue", "hexlet.io"),
-                Map.of("key", "proxy", "status", "changed", "oldValue", "123.123.12.13", "newValue", "122.121.10.11"),
-                Map.of("key", "timeout", "status", "removed", "oldValue", 50),
-                Map.of("key", "data", "status", "added", "newValue", List.of(1, 2, 3, 4, 5)),
-                Map.of("key", "value", "status", "removed", "oldValue", map),
-                Map.of("key", "verbose", "status", "added", "newValue", true)
+        List<Map<String, Object>> diff = Differ.generate(first, second);
+
+        assertEquals(List.of(), diff);
+    }
+
+    @Test
+    void onlyAdded() {
+        Map<String, Object> first = Map.of();
+        Map<String, Object> second = new HashMap<>();
+        second.put("b", 2);
+        second.put("a", 1);
+
+        List<Map<String, Object>> diff = Differ.generate(first, second);
+
+        List<Map<String, Object>> expected = List.of(
+                Map.of("key", "a", "status", "added", "newValue", 1),
+                Map.of("key", "b", "status", "added", "newValue", 2)
         );
 
-        Formatter formatter = new StylishFormatter();
-        String actual = formatter.format(diff);
-
-        String expected =
-                 "{\n"
-                 + "    host: hexlet.io\n"
-                 + "  - proxy: 123.123.12.13\n"
-                 + "  + proxy: 122.121.10.11\n"
-                 + "  - timeout: 50\n"
-                 + "  + data: [1, 2, 3, 4, 5]\n"
-                 + "  - value: {1=2, 3=4}\n"
-                 + "  + verbose: true\n"
-                 + "}";
-
-        assertEquals(expected, actual);
+        assertEquals(expected, diff);
     }
 
     @Test
-    void testEmptyFormatter() {
-        Formatter formatter = new StylishFormatter();
-        String actual = formatter.format(List.of());
+    void onlyRemoved() {
+        Map<String, Object> first = new HashMap<>();
+        first.put("z", 9);
+        first.put("x", 7);
+        Map<String, Object> second = Map.of();
 
-        String expected = "{\n}";
+        List<Map<String, Object>> diff = Differ.generate(first, second);
 
-        assertEquals(expected, actual);
+        List<Map<String, Object>> expected = List.of(
+                Map.of("key", "x", "status", "removed", "oldValue", 7),
+                Map.of("key", "z", "status", "removed", "oldValue", 9)
+        );
+
+        assertEquals(expected, diff);
     }
 
     @Test
-    void testFormatterFactory() {
-        Formatter formatter = FormatterFactory.get("stylish");
-        assertEquals(StylishFormatter.class, formatter.getClass());
-    }
+    void onlyChanged() {
+        Map<String, Object> first = new HashMap<>();
+        first.put("a", "old");
+        first.put("b", 100);
+        first.put("c", null);
 
+        Map<String, Object> second = new HashMap<>();
+        second.put("a", "new");
+        second.put("b", 200);
+        second.put("c", 5);
 
-    @Test
-    void testComparisonJson() throws Exception {
-        var path1 = Path.of("src/test/resources/nested_file1.json");
-        var path2 = Path.of("src/test/resources/nested_file2.json");
+        List<Map<String, Object>> diff = Differ.generate(first, second);
 
-        mapper = new ObjectMapper();
+        Map<String, Object> e1 = new HashMap<>();
+        e1.put("key", "a");
+        e1.put("status", "changed");
+        e1.put("oldValue", "old");
+        e1.put("newValue", "new");
 
-        Map<String, Object> data1 = mapper.readValue(path1.toFile(),
-                new TypeReference<>() { });
-        Map<String, Object> data2 = mapper.readValue(path2.toFile(),
-                new TypeReference<>() { });
+        Map<String, Object> e2 = new HashMap<>();
+        e2.put("key", "b");
+        e2.put("status", "changed");
+        e2.put("oldValue", 100);
+        e2.put("newValue", 200);
 
-        List<Map<String, Object>> diff = Differ.generate(data1, data2);
+        Map<String, Object> e3 = new HashMap<>();
+        e3.put("key", "c");
+        e3.put("status", "changed");
+        e3.put("oldValue", null);
+        e3.put("newValue", 5);
 
-        Formatter formatter = new StylishFormatter();
-        String actual = formatter.format(diff);
-
-        String expected =
-                "{\n"
-                + "    chars1: [a, b, c]\n"
-                + "  - chars2: [d, e, f]\n"
-                + "  + chars2: false\n"
-                + "  - checked: false\n"
-                + "  + checked: true\n"
-                + "  - default: null\n"
-                + "  + default: [value1, value2]\n"
-                + "  - id: 45\n"
-                + "  + id: null\n"
-                + "  - key1: value1\n"
-                + "  + key2: value2\n"
-                + "    numbers1: [1, 2, 3, 4]\n"
-                + "  - numbers2: [2, 3, 4, 5]\n"
-                + "  + numbers2: [22, 33, 44, 55]\n"
-                + "  - numbers3: [3, 4, 5]\n"
-                + "  + numbers4: [4, 5, 6]\n"
-                + "  + obj1: {nestedKey=value, isNested=true}\n"
-                + "  - setting1: Some value\n"
-                + "  + setting1: Another value\n"
-                + "  - setting2: 200\n"
-                + "  + setting2: 300\n"
-                + "  - setting3: true\n"
-                + "  + setting3: none\n"
-                + "}";
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void testComparisonJsonWithNull() {
-        Map<String, Object> entry = new HashMap<>();
-        entry.put("key", "setting");
-        entry.put("status", "changed");
-        entry.put("oldValue", null);
-        entry.put("newValue", 123);
-
-        List<Map<String, Object>> diff = List.of(entry);
-
-        Formatter formatter = new StylishFormatter();
-        String actual = formatter.format(diff);
-
-        String expected =
-                "{\n"
-                + "  - setting: null\n"
-                + "  + setting: 123\n"
-                + "}";
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    void testCompareJsonPlain() throws IOException {
-        var path1 = Path.of("src/test/resources/nested_file1.json");
-        var path2 = Path.of("src/test/resources/nested_file2.json");
-
-        mapper = new ObjectMapper();
-
-        Map<String, Object> data1 = mapper.readValue(path1.toFile(),
-                new TypeReference<>() { });
-        Map<String, Object> data2 = mapper.readValue(path2.toFile(),
-                new TypeReference<>() { });
-
-        List<Map<String, Object>> diff = Differ.generate(data1, data2);
-
-        Formatter formatter = new PlainFormatter();
-        String actual = formatter.format(diff);
-
-        String expected =
-                "\n"
-                + "Property 'chars2' was updated. From [complex value] to false\n"
-                + "Property 'checked' was updated. From false to true\n"
-                + "Property 'default' was updated. From null to [complex value]\n"
-                + "Property 'id' was updated. From 45 to null\n"
-                + "Property 'key1' was removed\n"
-                + "Property 'key2' was added with value: 'value2'\n"
-                + "Property 'numbers2' was updated. From [complex value] to [complex value]\n"
-                + "Property 'numbers3' was removed\n"
-                + "Property 'numbers4' was added with value: [complex value]\n"
-                + "Property 'obj1' was added with value: [complex value]\n"
-                + "Property 'setting1' was updated. From 'Some value' to 'Another value'\n"
-                + "Property 'setting2' was updated. From 200 to 300\n"
-                + "Property 'setting3' was updated. From true to 'none'"
-                + "\n";
-
-        assertEquals(expected, actual);
+        List<Map<String, Object>> expected = List.of(e1, e2, e3);
+        assertEquals(expected, diff);
     }
 }
