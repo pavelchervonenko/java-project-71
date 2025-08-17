@@ -13,6 +13,10 @@ import java.util.Objects;
 
 
 public class Differ {
+    public static String generate(String filePath1, String filePath2) throws IOException {
+        return generate(filePath1, filePath2, "stylish");
+    }
+
     public static String generate(String filePath1, String filePath2, String format) throws IOException {
         Path absolutePath1 = Paths.get(filePath1).toAbsolutePath().normalize();
         Path absolutePath2 = Paths.get(filePath2).toAbsolutePath().normalize();
