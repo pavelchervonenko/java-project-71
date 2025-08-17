@@ -14,7 +14,6 @@ public class PlainFormatterTest {
     private static final int N3 = 3;
     private static final int N4 = 4;
     private static final int N5 = 5;
-    private static final int AGE30 = 30;
 
 
     @Test
@@ -54,12 +53,12 @@ public class PlainFormatterTest {
     void onlyAdded() {
         List<Map<String, Object>> diff = List.of(
                 Map.of("key", "a", "status", "added", "newValue", List.of(N1, N2)),
-                Map.of("key", "b", "status", "added", "newValue", AGE30));
+                Map.of("key", "b", "status", "added", "newValue", N5));
 
 
         String expected =
                 "Property 'a' was added with value: [complex value]\n"
-                + "Property 'b' was added with value: 30";
+                + "Property 'b' was added with value: 5";
 
         assertEquals(expected, new PlainFormatter().format(diff));
     }

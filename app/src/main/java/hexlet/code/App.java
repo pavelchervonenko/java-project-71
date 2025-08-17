@@ -26,19 +26,22 @@ class App implements Callable<Integer> {
             defaultValue = "stylish")
     private String format;
 
+    private static final int SUCCESS = 0;
+    private static final int FILE_MISSING_FAILED = 2;
+    private static final int READ_PARSE_FAILED = 3;
 
     @Override
     public Integer call() {
         try {
             String output = Differ.generate(filePath1, filePath2, format);
             System.out.println(output);
-            return 0;
+            return SUCCESS;
         } catch (IllegalArgumentException e) {
             System.err.println(e.getMessage());
-            return 2;
+            return FILE_MISSING_FAILED;
         } catch (IOException e) {
             System.err.println(e.getMessage());
-            return 3;
+            return READ_PARSE_FAILED;
         }
     }
 

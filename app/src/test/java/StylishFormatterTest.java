@@ -15,7 +15,6 @@ public class StylishFormatterTest {
     private static final int N3 = 3;
     private static final int N4 = 4;
     private static final int N5 = 5;
-    private static final int TIMEOUT50 = 50;
 
     @Test
     void mixed() {
@@ -26,7 +25,7 @@ public class StylishFormatterTest {
         List<Map<String, Object>> diff = List.of(
                 Map.of("key", "host", "status", "unchanged", "oldValue", "hexlet.io"),
                 Map.of("key", "proxy", "status", "changed", "oldValue", "123.123.12.13", "newValue", "122.121.10.11"),
-                Map.of("key", "timeout", "status", "removed", "oldValue", TIMEOUT50),
+                Map.of("key", "timeout", "status", "removed", "oldValue", N5),
                 Map.of("key", "data", "status", "added", "newValue", List.of(N1, N2, N3, N4, N5)),
                 Map.of("key", "value", "status", "removed", "oldValue", map),
                 Map.of("key", "verbose", "status", "added", "newValue", true)
@@ -40,7 +39,7 @@ public class StylishFormatterTest {
                 + "    host: hexlet.io\n"
                 + "  - proxy: 123.123.12.13\n"
                 + "  + proxy: 122.121.10.11\n"
-                + "  - timeout: 50\n"
+                + "  - timeout: 5\n"
                 + "  + data: [1, 2, 3, 4, 5]\n"
                 + "  - value: {1=2, 3=4}\n"
                 + "  + verbose: true\n"

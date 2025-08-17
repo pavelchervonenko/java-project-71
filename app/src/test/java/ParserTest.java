@@ -18,7 +18,7 @@ public class ParserTest {
     private static final int N20 = 20;
 
     @TempDir
-    Path temp;
+    private Path temp;
 
     private Path writeFile(String name, String content) throws IOException {
         Path path = temp.resolve(name);

@@ -19,8 +19,6 @@ public class JsonFormatterTest {
     private static final int N3 = 3;
     private static final int N4 = 4;
     private static final int N5 = 5;
-    private static final int TIMEOUT50 = 50;
-    private static final int AGE30 = 30;
 
     private final Formatter formatter = new JsonFormatter();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -34,7 +32,7 @@ public class JsonFormatterTest {
         List<Map<String, Object>> diff = List.of(
                 entryUnchanged("host", "hexlet.io"),
                 entryChanged("proxy", "123.123.12.13", "122.121.10.11"),
-                entryRemoved("timeout", TIMEOUT50),
+                entryRemoved("timeout", N5),
                 entryAdded("data", List.of(N1, N2, N3, N4, N5)),
                 entryRemoved("value", inner),
                 entryAdded("verbose", true)
@@ -46,7 +44,7 @@ public class JsonFormatterTest {
         ArrayNode expected = mapper.createArrayNode();
         expected.add(obj("host", "unchanged", "hexlet.io", null));
         expected.add(obj("proxy", "changed", "123.123.12.13", "122.121.10.11"));
-        expected.add(obj("timeout", "removed", TIMEOUT50, null));
+        expected.add(obj("timeout", "removed", N5, null));
         expected.add(obj("data", "added", null, List.of(N1, N2, N3, N4, N5)));
         expected.add(obj("value", "removed", inner, null));
         expected.add(obj("verbose", "added", null, true));
@@ -67,7 +65,7 @@ public class JsonFormatterTest {
     @Test
     void addedRemovedChanged() throws Exception {
         List<Map<String, Object>> diff = List.of(
-                entryAdded("age", AGE30),
+                entryAdded("age", N4),
                 entryRemoved("name", "Pavel"),
                 entryChanged("active", false, true),
                 entryChanged("note", null, "hi")
@@ -78,7 +76,7 @@ public class JsonFormatterTest {
 
         ArrayNode expected = mapper.createArrayNode();
 
-        expected.add(obj("age", "added", null, AGE30));
+        expected.add(obj("age", "added", null, N4));
         expected.add(obj("name", "removed", "Pavel", null));
         expected.add(obj("active", "changed", false, true));
         expected.add(obj("note", "changed", null, "hi"));
