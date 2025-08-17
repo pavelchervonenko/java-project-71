@@ -5,10 +5,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Option;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.Files;
-
+import java.io.IOException;
 import java.util.concurrent.Callable;
 
 @Command(name = "gendiff",
@@ -18,11 +15,11 @@ class App implements Callable<Integer> {
 
     @Parameters(index = "0",
             description = "path to first file")
-    private String filepathFirst;
+    private String filePath1;
 
     @Parameters(index = "1",
             description = "path to second file")
-    private String filepathSecond;
+    private String filePath2;
 
     @Option(names = {"-f", "--format"},
             description = "output format [default: stylish]",
@@ -31,18 +28,18 @@ class App implements Callable<Integer> {
 
 
     @Override
-    public Integer call() throws Exception {
-        Path absolutePathFirst = Paths.get(filepathFirst).toAbsolutePath().normalize();
-        Path absolutePathSecond = Paths.get(filepathSecond).toAbsolutePath().normalize();
-
-        if (!Files.exists(absolutePathFirst) || !Files.exists(absolutePathSecond)) {
-            throw new Exception("File does not exist");
+    public Integer call() {
+        try {
+            String output = Differ.generate(filePath1, filePath2, format);
+            System.out.println(output);
+            return 0;
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+            return 2;
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            return 3;
         }
-
-        var output = Differ.generate(absolutePathFirst, absolutePathSecond, format);
-        System.out.println(output);
-
-        return 0;
     }
 
     public static void main(String... args) {
