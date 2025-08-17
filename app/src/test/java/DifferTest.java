@@ -12,17 +12,23 @@ import java.util.Map;
 
 
 class DifferTest {
+    private static final int N1 = 1;
+    private static final int N2 = 2;
+    private static final int N3 = 3;
+    private static final int N4 = 4;
+
+
     @Test
     void mixed() {
         Map<String, Object> first = new HashMap<>();
-        first.put("m", 1);
+        first.put("m", N1);
         first.put("a", "x");
         first.put("r", true);
 
         Map<String, Object> second = new HashMap<>();
-        second.put("m", 1);
+        second.put("m", N1);
         second.put("a", "y");
-        second.put("z", 999);
+        second.put("z", N2);
 
         List<Map<String, Object>> diff = Differ.buildDiff(first, second);
 
@@ -38,7 +44,7 @@ class DifferTest {
         Map<String, Object> em = new HashMap<>();
         em.put("key", "m");
         em.put("status", "unchanged");
-        em.put("oldValue", 1);
+        em.put("oldValue", N1);
         expected.add(em);
 
         Map<String, Object> er = new HashMap<>();
@@ -50,7 +56,7 @@ class DifferTest {
         Map<String, Object> ez = new HashMap<>();
         ez.put("key", "z");
         ez.put("status", "added");
-        ez.put("newValue", 999);
+        ez.put("newValue", N2);
         expected.add(ez);
 
         assertEquals(expected, diff);
@@ -70,14 +76,14 @@ class DifferTest {
     void onlyAdded() {
         Map<String, Object> first = Map.of();
         Map<String, Object> second = new HashMap<>();
-        second.put("b", 2);
-        second.put("a", 1);
+        second.put("b", N2);
+        second.put("a", N1);
 
         List<Map<String, Object>> diff = Differ.buildDiff(first, second);
 
         List<Map<String, Object>> expected = List.of(
-                Map.of("key", "a", "status", "added", "newValue", 1),
-                Map.of("key", "b", "status", "added", "newValue", 2)
+                Map.of("key", "a", "status", "added", "newValue", N1),
+                Map.of("key", "b", "status", "added", "newValue", N2)
         );
 
         assertEquals(expected, diff);
@@ -86,15 +92,15 @@ class DifferTest {
     @Test
     void onlyRemoved() {
         Map<String, Object> first = new HashMap<>();
-        first.put("z", 9);
-        first.put("x", 7);
+        first.put("z", N3);
+        first.put("x", N4);
         Map<String, Object> second = Map.of();
 
         List<Map<String, Object>> diff = Differ.buildDiff(first, second);
 
         List<Map<String, Object>> expected = List.of(
-                Map.of("key", "x", "status", "removed", "oldValue", 7),
-                Map.of("key", "z", "status", "removed", "oldValue", 9)
+                Map.of("key", "x", "status", "removed", "oldValue", N4),
+                Map.of("key", "z", "status", "removed", "oldValue", N3)
         );
 
         assertEquals(expected, diff);
@@ -104,13 +110,13 @@ class DifferTest {
     void onlyChanged() {
         Map<String, Object> first = new HashMap<>();
         first.put("a", "old");
-        first.put("b", 100);
+        first.put("b", N1);
         first.put("c", null);
 
         Map<String, Object> second = new HashMap<>();
         second.put("a", "new");
-        second.put("b", 200);
-        second.put("c", 5);
+        second.put("b", N2);
+        second.put("c", N3);
 
         List<Map<String, Object>> diff = Differ.buildDiff(first, second);
 
@@ -123,14 +129,14 @@ class DifferTest {
         Map<String, Object> e2 = new HashMap<>();
         e2.put("key", "b");
         e2.put("status", "changed");
-        e2.put("oldValue", 100);
-        e2.put("newValue", 200);
+        e2.put("oldValue", N1);
+        e2.put("newValue", N2);
 
         Map<String, Object> e3 = new HashMap<>();
         e3.put("key", "c");
         e3.put("status", "changed");
         e3.put("oldValue", null);
-        e3.put("newValue", 5);
+        e3.put("newValue", N3);
 
         List<Map<String, Object>> expected = List.of(e1, e2, e3);
         assertEquals(expected, diff);

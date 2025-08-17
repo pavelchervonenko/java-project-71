@@ -14,6 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 public class JsonFormatterTest {
+    private static final int N1 = 1;
+    private static final int N2 = 2;
+    private static final int N3 = 3;
+    private static final int N4 = 4;
+    private static final int N5 = 5;
+    private static final int TIMEOUT50 = 50;
+    private static final int AGE30 = 30;
 
     private final Formatter formatter = new JsonFormatter();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -21,14 +28,14 @@ public class JsonFormatterTest {
     @Test
     void mixed() throws Exception {
         Map<Integer, String> inner = new LinkedHashMap<>();
-        inner.put(1, "2");
-        inner.put(3, "4");
+        inner.put(N1, "2");
+        inner.put(N3, "4");
 
         List<Map<String, Object>> diff = List.of(
                 entryUnchanged("host", "hexlet.io"),
                 entryChanged("proxy", "123.123.12.13", "122.121.10.11"),
-                entryRemoved("timeout", 50),
-                entryAdded("data", List.of(1, 2, 3, 4, 5)),
+                entryRemoved("timeout", TIMEOUT50),
+                entryAdded("data", List.of(N1, N2, N3, N4, N5)),
                 entryRemoved("value", inner),
                 entryAdded("verbose", true)
         );
@@ -39,8 +46,8 @@ public class JsonFormatterTest {
         ArrayNode expected = mapper.createArrayNode();
         expected.add(obj("host", "unchanged", "hexlet.io", null));
         expected.add(obj("proxy", "changed", "123.123.12.13", "122.121.10.11"));
-        expected.add(obj("timeout", "removed", 50, null));
-        expected.add(obj("data", "added", null, List.of(1, 2, 3, 4, 5)));
+        expected.add(obj("timeout", "removed", TIMEOUT50, null));
+        expected.add(obj("data", "added", null, List.of(N1, N2, N3, N4, N5)));
         expected.add(obj("value", "removed", inner, null));
         expected.add(obj("verbose", "added", null, true));
 
@@ -60,7 +67,7 @@ public class JsonFormatterTest {
     @Test
     void addedRemovedChanged() throws Exception {
         List<Map<String, Object>> diff = List.of(
-                entryAdded("age", 30),
+                entryAdded("age", AGE30),
                 entryRemoved("name", "Pavel"),
                 entryChanged("active", false, true),
                 entryChanged("note", null, "hi")
@@ -71,7 +78,7 @@ public class JsonFormatterTest {
 
         ArrayNode expected = mapper.createArrayNode();
 
-        expected.add(obj("age", "added", null, 30));
+        expected.add(obj("age", "added", null, AGE30));
         expected.add(obj("name", "removed", "Pavel", null));
         expected.add(obj("active", "changed", false, true));
         expected.add(obj("note", "changed", null, "hi"));
@@ -83,7 +90,7 @@ public class JsonFormatterTest {
     void addedChangedWithListAndMap() throws Exception {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("k", "v");
-        List<Integer> list = List.of(1, 2, 3);
+        List<Integer> list = List.of(N1, N2, N3);
 
         List<Map<String, Object>> diff = List.of(
                 entryAdded("cfg", map),

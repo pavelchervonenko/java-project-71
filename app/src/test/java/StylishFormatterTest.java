@@ -10,17 +10,24 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StylishFormatterTest {
+    private static final int N1 = 1;
+    private static final int N2 = 2;
+    private static final int N3 = 3;
+    private static final int N4 = 4;
+    private static final int N5 = 5;
+    private static final int TIMEOUT50 = 50;
+
     @Test
     void mixed() {
         Map<Integer, String> map = new LinkedHashMap<>();
-        map.put(1, "2");
-        map.put(3, "4");
+        map.put(N1, "2");
+        map.put(N3, "4");
 
         List<Map<String, Object>> diff = List.of(
                 Map.of("key", "host", "status", "unchanged", "oldValue", "hexlet.io"),
                 Map.of("key", "proxy", "status", "changed", "oldValue", "123.123.12.13", "newValue", "122.121.10.11"),
-                Map.of("key", "timeout", "status", "removed", "oldValue", 50),
-                Map.of("key", "data", "status", "added", "newValue", List.of(1, 2, 3, 4, 5)),
+                Map.of("key", "timeout", "status", "removed", "oldValue", TIMEOUT50),
+                Map.of("key", "data", "status", "added", "newValue", List.of(N1, N2, N3, N4, N5)),
                 Map.of("key", "value", "status", "removed", "oldValue", map),
                 Map.of("key", "verbose", "status", "added", "newValue", true)
         );
@@ -50,7 +57,7 @@ public class StylishFormatterTest {
     @Test
     void onlyAdded() {
         List<Map<String, Object>> diff = List.of(
-                Map.of("key", "c", "status", "added", "newValue", List.of(1, 2)));
+                Map.of("key", "c", "status", "added", "newValue", List.of(N1, N2)));
 
         String expected =
                 "{\n"
@@ -83,7 +90,7 @@ public class StylishFormatterTest {
         map1.put("key", "x");
         map1.put("status", "changed");
         map1.put("oldValue", null);
-        map1.put("newValue", 5);
+        map1.put("newValue", N5);
 
         Map<String, Object> map2 = new HashMap<>();
         map2.put("key", "y");
@@ -108,11 +115,11 @@ public class StylishFormatterTest {
     @Test
     void onlyUnchanged() {
         List<Map<String, Object>> diff = List.of(
-                Map.of("key", "a", "status", "unchanged", "oldValue", 10));
+                Map.of("key", "a", "status", "unchanged", "oldValue", N4));
 
         String expected =
                 "{\n"
-                + "    a: 10\n"
+                + "    a: 4\n"
                 + "}";
 
         assertEquals(expected, new StylishFormatter().format(diff));

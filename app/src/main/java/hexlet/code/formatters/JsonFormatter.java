@@ -13,7 +13,7 @@ public class JsonFormatter implements Formatter {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public String format(List<Map<String, Object>> diff) {
+    public final String format(List<Map<String, Object>> diff) {
         ArrayNode root = mapper.createArrayNode();
 
         for (Map<String, Object> item : diff) {

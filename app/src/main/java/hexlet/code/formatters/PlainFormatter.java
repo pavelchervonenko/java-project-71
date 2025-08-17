@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PlainFormatter implements Formatter {
     @Override
-    public String format(List<Map<String, Object>> diff) {
+    public final String format(List<Map<String, Object>> diff) {
 
         List<String> lines = new ArrayList<>();
 

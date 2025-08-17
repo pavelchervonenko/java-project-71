@@ -12,6 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ParserTest {
+    private static final int N1 = 1;
+    private static final int N2 = 2;
+    private static final int N10 = 10;
+    private static final int N20 = 20;
+
     @TempDir
     Path temp;
 
@@ -36,9 +41,9 @@ public class ParserTest {
 
         Map<String, Object> map = Parser.parse(file);
 
-        assertEquals(1, map.get("a"));
+        assertEquals(N1, map.get("a"));
         assertEquals("x", map.get("b"));
-        assertEquals(List.of(1, 2), map.get("arr"));
+        assertEquals(List.of(N1, N2), map.get("arr"));
         assertNull(map.get("c"));
     }
 
@@ -56,9 +61,9 @@ public class ParserTest {
 
         Map<String, Object> m = Parser.parse(file);
 
-        assertEquals(1, m.get("a"));
+        assertEquals(N1, m.get("a"));
         assertEquals("x", m.get("b"));
-        assertEquals(List.of(1, 2), m.get("arr"));
+        assertEquals(List.of(N1, N2), m.get("arr"));
         assertNull(m.get("c"));
     }
 
@@ -75,9 +80,9 @@ public class ParserTest {
 
         Map<String, Object> m = Parser.parse(file);
 
-        assertEquals(1, m.get("a"));
+        assertEquals(N1, m.get("a"));
         assertEquals("x", m.get("b"));
-        assertEquals(List.of(10, 20), m.get("arr"));
+        assertEquals(List.of(N10, N20), m.get("arr"));
     }
 
 }

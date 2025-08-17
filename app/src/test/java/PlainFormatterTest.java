@@ -9,12 +9,20 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PlainFormatterTest {
+    private static final int N1 = 1;
+    private static final int N2 = 2;
+    private static final int N3 = 3;
+    private static final int N4 = 4;
+    private static final int N5 = 5;
+    private static final int AGE30 = 30;
+
+
     @Test
     void mixed() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("k", "v");
 
-        List<Integer> list = List.of(1, 2, 3);
+        List<Integer> list = List.of(N1, N2, N3);
 
         List<Map<String, Object>> diff = List.of(
                 Map.of("key", "cfg", "status", "added", "newValue", map),
@@ -45,8 +53,8 @@ public class PlainFormatterTest {
     @Test
     void onlyAdded() {
         List<Map<String, Object>> diff = List.of(
-                Map.of("key", "a", "status", "added", "newValue", List.of(1, 2)),
-                Map.of("key", "b", "status", "added", "newValue", 30));
+                Map.of("key", "a", "status", "added", "newValue", List.of(N1, N2)),
+                Map.of("key", "b", "status", "added", "newValue", AGE30));
 
 
         String expected =
@@ -59,7 +67,7 @@ public class PlainFormatterTest {
     @Test
     void onlyRemoved() {
         List<Map<String, Object>> diff = List.of(
-                Map.of("key", "c", "status", "removed", "oldValue", List.of(3, 4)),
+                Map.of("key", "c", "status", "removed", "oldValue", List.of(N3, N4)),
                 Map.of("key", "d", "status", "removed", "oldValue", "pavel"));
 
 
@@ -76,7 +84,7 @@ public class PlainFormatterTest {
         map1.put("key", "x");
         map1.put("status", "changed");
         map1.put("oldValue", null);
-        map1.put("newValue", 5);
+        map1.put("newValue", N5);
 
         Map<String, Object> map2 = new LinkedHashMap<>();
         map2.put("key", "y");
@@ -96,7 +104,7 @@ public class PlainFormatterTest {
     @Test
     void onlyUnchanged() {
         List<Map<String, Object>> diff = List.of(
-                Map.of("key", "a", "status", "unchanged", "oldValue", 10));
+                Map.of("key", "a", "status", "unchanged", "oldValue", N4));
 
         assertEquals("", new PlainFormatter().format(diff));
     }
