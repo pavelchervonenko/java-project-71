@@ -1,23 +1,37 @@
 package hexlet.code;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.TreeSet;
-import java.util.Objects;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class Differ {
-    public static List<Map<String, Object>> generate(Map<String, Object> dataFirst, Map<String, Object> dataSecond) {
-        var allKeys = new TreeSet<>();
+    public static String generate(Path filePath1, Path filePath2, String format) throws IOException {
+
+        Map<String, Object> dataFirst = Parser.parse(filePath1);
+        Map<String, Object> dataSecond = Parser.parse(filePath2);
+
+        List<Map<String, Object>> diff = buildDiff(dataFirst, dataSecond);
+
+        Formatter formatter = FormatterFactory.get(format);
+
+        return formatter.format(diff);
+    }
+
+    public static List<Map<String, Object>> buildDiff(Map<String, Object> dataFirst, Map<String, Object> dataSecond) {
+        var allKeys = new TreeSet<String>();
 
         allKeys.addAll(dataFirst.keySet());
         allKeys.addAll(dataSecond.keySet());
 
         var result = new ArrayList<Map<String, Object>>();
 
-        for (var key: allKeys) {
+        for (String key: allKeys) {
             boolean keyInFirst = dataFirst.containsKey(key);
             boolean keyInSecond = dataSecond.containsKey(key);
 

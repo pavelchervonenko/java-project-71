@@ -24,7 +24,7 @@ class DifferTest {
         second.put("a", "y");
         second.put("z", 999);
 
-        List<Map<String, Object>> diff = Differ.generate(first, second);
+        List<Map<String, Object>> diff = Differ.buildDiff(first, second);
 
         List<Map<String, Object>> expected = new ArrayList<>();
 
@@ -61,7 +61,7 @@ class DifferTest {
         Map<String, Object> first = Map.of();
         Map<String, Object> second = Map.of();
 
-        List<Map<String, Object>> diff = Differ.generate(first, second);
+        List<Map<String, Object>> diff = Differ.buildDiff(first, second);
 
         assertEquals(List.of(), diff);
     }
@@ -73,7 +73,7 @@ class DifferTest {
         second.put("b", 2);
         second.put("a", 1);
 
-        List<Map<String, Object>> diff = Differ.generate(first, second);
+        List<Map<String, Object>> diff = Differ.buildDiff(first, second);
 
         List<Map<String, Object>> expected = List.of(
                 Map.of("key", "a", "status", "added", "newValue", 1),
@@ -90,7 +90,7 @@ class DifferTest {
         first.put("x", 7);
         Map<String, Object> second = Map.of();
 
-        List<Map<String, Object>> diff = Differ.generate(first, second);
+        List<Map<String, Object>> diff = Differ.buildDiff(first, second);
 
         List<Map<String, Object>> expected = List.of(
                 Map.of("key", "x", "status", "removed", "oldValue", 7),
@@ -112,7 +112,7 @@ class DifferTest {
         second.put("b", 200);
         second.put("c", 5);
 
-        List<Map<String, Object>> diff = Differ.generate(first, second);
+        List<Map<String, Object>> diff = Differ.buildDiff(first, second);
 
         Map<String, Object> e1 = new HashMap<>();
         e1.put("key", "a");
