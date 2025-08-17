@@ -2,14 +2,15 @@ package hexlet.code.formatters;
 
 import hexlet.code.Formatter;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 
 public class PlainFormatter implements Formatter {
     @Override
     public String format(List<Map<String, Object>> diff) {
-        StringBuilder result = new StringBuilder();
-        result.append("\n");
+
+        List<String> lines = new ArrayList<>();
 
         for (var item : diff) {
             Object key = item.get("key");
@@ -20,18 +21,18 @@ public class PlainFormatter implements Formatter {
                 case "unchanged" :
                     break;
                 case "removed" :
-                    result.append(formatLine(key));
+                    lines.add(formatLine(key).trim());
                     break;
                 case "added" :
-                    result.append(formatLine(key, item.get("newValue")));
+                    lines.add(formatLine(key, item.get("newValue")).trim());
                     break;
                 case "changed" :
-                    result.append(formatLine(key, item.get("oldValue"), item.get("newValue")));
+                    lines.add(formatLine(key, item.get("oldValue"), item.get("newValue")).trim());
                     break;
                 default: throw new RuntimeException("Unknown status");
             }
         }
-        return result.toString();
+        return String.join("\n", lines);
     }
 
     private String formatLine(Object key) {

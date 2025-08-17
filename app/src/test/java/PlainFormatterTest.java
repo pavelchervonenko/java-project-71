@@ -28,19 +28,18 @@ public class PlainFormatterTest {
         String actual = formatter.format(diff);
 
         String expected =
-                "\n"
-                + "Property 'cfg' was added with value: [complex value]\n"
+                "Property 'cfg' was added with value: [complex value]\n"
                 + "Property 'data' was added with value: [complex value]\n"
                 + "Property 'host' was updated. From [complex value] to [complex value]\n"
                 + "Property 'host2' was updated. From [complex value] to false\n"
-                + "Property 'value' was removed\n";
+                + "Property 'value' was removed";
 
         assertEquals(expected, actual);
     }
 
     @Test
     void empty() {
-        assertEquals("\n", new PlainFormatter().format(List.of()));
+        assertEquals("", new PlainFormatter().format(List.of()));
     }
 
     @Test
@@ -51,9 +50,8 @@ public class PlainFormatterTest {
 
 
         String expected =
-                "\n"
-                + "Property 'a' was added with value: [complex value]\n"
-                + "Property 'b' was added with value: 30\n";
+                "Property 'a' was added with value: [complex value]\n"
+                + "Property 'b' was added with value: 30";
 
         assertEquals(expected, new PlainFormatter().format(diff));
     }
@@ -66,9 +64,8 @@ public class PlainFormatterTest {
 
 
         String expected =
-                "\n"
-                + "Property 'c' was removed\n"
-                + "Property 'd' was removed\n";
+                "Property 'c' was removed\n"
+                + "Property 'd' was removed";
 
         assertEquals(expected, new PlainFormatter().format(diff));
     }
@@ -90,9 +87,8 @@ public class PlainFormatterTest {
         List<Map<String, Object>> diff = List.of(map1, map2);
 
         String expected =
-                "\n"
-                + "Property 'x' was updated. From null to 5\n"
-                + "Property 'y' was updated. From true to null\n";
+                "Property 'x' was updated. From null to 5\n"
+                + "Property 'y' was updated. From true to null";
 
         assertEquals(expected, new PlainFormatter().format(diff));
     }
@@ -102,7 +98,7 @@ public class PlainFormatterTest {
         List<Map<String, Object>> diff = List.of(
                 Map.of("key", "a", "status", "unchanged", "oldValue", 10));
 
-        assertEquals("\n", new PlainFormatter().format(diff));
+        assertEquals("", new PlainFormatter().format(diff));
     }
 }
 
