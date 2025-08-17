@@ -1,7 +1,9 @@
 package hexlet.code;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.List;
 import java.util.TreeSet;
@@ -11,15 +13,19 @@ import java.util.Objects;
 
 
 public class Differ {
-    public static String generate(Path filePath1, Path filePath2, String format) throws IOException {
+    public static String generate(String filePath1, String filePath2, String format) throws IOException {
+        Path absolutePath1 = Paths.get(filePath1).toAbsolutePath().normalize();
+        Path absolutePath2 = Paths.get(filePath2).toAbsolutePath().normalize();
 
-        Map<String, Object> dataFirst = Parser.parse(filePath1);
-        Map<String, Object> dataSecond = Parser.parse(filePath2);
+        if (!Files.exists(absolutePath1) || !Files.exists(absolutePath2)) {
+            throw new IllegalArgumentException("File does not exist");
+        }
+
+        Map<String, Object> dataFirst = Parser.parse(absolutePath1);
+        Map<String, Object> dataSecond = Parser.parse(absolutePath2);
 
         List<Map<String, Object>> diff = buildDiff(dataFirst, dataSecond);
-
         Formatter formatter = FormatterFactory.get(format);
-
         return formatter.format(diff);
     }
 
