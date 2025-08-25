@@ -7,10 +7,19 @@ test-json-stylish:
 test-yaml-stylish:
 	./build/install/app/bin/app ./src/test/resources/file1.yaml ./src/test/resources/file2.yaml
 
+test-nested-json-plain:
+	./build/install/app/bin/app ./src/test/resources/nested_file1.json ./src/test/resources/nested_file2.json -f=plain
+
 test-nested-json-stylish:
 	./build/install/app/bin/app ./src/test/resources/nested_file1.json ./src/test/resources/nested_file2.json
 
-test-nested-json-plain:
+test-nested-yaml-stylish:
+	./build/install/app/bin/app ./src/test/resources/nested_file1.yaml ./src/test/resources/nested_file2.yaml
+
+test-nested-yaml-json:
+	./build/install/app/bin/app ./src/test/resources/nested_file1.yaml ./src/test/resources/nested_file2.yaml -f=json
+
+test-nested-yaml-plain:
 	./build/install/app/bin/app ./src/test/resources/nested_file1.json ./src/test/resources/nested_file2.json -f=plain
 
 test-json-json:
