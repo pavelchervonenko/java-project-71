@@ -1,144 +1,249 @@
 package hexlet.code;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStream;
+
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 
 
 class DifferTest {
-    private static final int N1 = 1;
-    private static final int N2 = 2;
-    private static final int N3 = 3;
-    private static final int N4 = 4;
+    private static String readResource(String name) throws IOException {
+        try (InputStream input = DifferTest.class.getClassLoader().getResourceAsStream(name)) {
+            if (input == null) {
+                throw new IllegalArgumentException("Resource not found: " + name);
+            }
+            return new String(input.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new IOException(e);
+        }
+    }
 
+    private static String resourcePath(String resourceName) {
+        URL url = DifferTest.class.getClassLoader().getResource(resourceName);
+        if (url == null) {
+            throw new IllegalArgumentException("Resource not found: " + resourceName);
+        }
+        try {
+            return Paths.get(url.toURI()).toAbsolutePath().normalize().toString();
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Bad resource URI: " + resourceName, e);
+        }
+    }
+
+    private static final String FILE2_JSON = resourcePath("nested_file2.json");
+    private static final String FILE2_YAML = resourcePath("nested_file2.yaml");
+    private static final String FILE1_JSON = resourcePath("nested_file1.json");
+    private static final String FILE1_YAML = resourcePath("nested_file1.yaml");
 
     @Test
-    void mixed() {
-        Map<String, Object> first = new HashMap<>();
-        first.put("m", N1);
-        first.put("a", "x");
-        first.put("r", true);
+    void generateYmlJsonTest() throws IOException {
+        String expected = readResource("DifferTest_for_json_format.json");
+        String actual = Differ.generate(FILE1_YAML, FILE2_YAML, "json");
 
-        Map<String, Object> second = new HashMap<>();
-        second.put("m", N1);
-        second.put("a", "y");
-        second.put("z", N2);
+        ObjectMapper mapper = new ObjectMapper();
 
-        List<Map<String, Object>> diff = Differ.buildDiff(first, second);
+        JsonNode exp = mapper.readTree(expected);
+        JsonNode act = mapper.readTree(actual);
 
-        List<Map<String, Object>> expected = new ArrayList<>();
-
-        Map<String, Object> ea = new HashMap<>();
-        ea.put("key", "a");
-        ea.put("status", "changed");
-        ea.put("oldValue", "x");
-        ea.put("newValue", "y");
-        expected.add(ea);
-
-        Map<String, Object> em = new HashMap<>();
-        em.put("key", "m");
-        em.put("status", "unchanged");
-        em.put("oldValue", N1);
-        expected.add(em);
-
-        Map<String, Object> er = new HashMap<>();
-        er.put("key", "r");
-        er.put("status", "removed");
-        er.put("oldValue", true);
-        expected.add(er);
-
-        Map<String, Object> ez = new HashMap<>();
-        ez.put("key", "z");
-        ez.put("status", "added");
-        ez.put("newValue", N2);
-        expected.add(ez);
-
-        assertEquals(expected, diff);
+        assertEquals(exp, act);
     }
 
     @Test
-    void empty() {
-        Map<String, Object> first = Map.of();
-        Map<String, Object> second = Map.of();
+    void generateYmlStylishTest() throws IOException {
+        String expected = "{\n"
+                + "    chars1: [a, b, c]\n"
+                + "  - chars2: [d, e, f]\n"
+                + "  + chars2: false\n"
+                + "  - checked: false\n"
+                + "  + checked: true\n"
+                + "  - default: null\n"
+                + "  + default: [value1, value2]\n"
+                + "  - id: 45\n"
+                + "  + id: null\n"
+                + "  - key1: value1\n"
+                + "  + key2: value2\n"
+                + "    numbers1: [1, 2, 3, 4]\n"
+                + "  - numbers2: [2, 3, 4, 5]\n"
+                + "  + numbers2: [22, 33, 44, 55]\n"
+                + "  - numbers3: [3, 4, 5]\n"
+                + "  + numbers4: [4, 5, 6]\n"
+                + "  + obj1: {nestedKey=value, isNested=true}\n"
+                + "  - setting1: Some value\n"
+                + "  + setting1: Another value\n"
+                + "  - setting2: 200\n"
+                + "  + setting2: 300\n"
+                + "  - setting3: true\n"
+                + "  + setting3: none\n"
+                + "}";
 
-        List<Map<String, Object>> diff = Differ.buildDiff(first, second);
+        String actual = Differ.generate(FILE1_YAML, FILE2_YAML, "stylish");
 
-        assertEquals(List.of(), diff);
+        assertEquals(expected, actual);
     }
 
     @Test
-    void onlyAdded() {
-        Map<String, Object> first = Map.of();
-        Map<String, Object> second = new HashMap<>();
-        second.put("b", N2);
-        second.put("a", N1);
+    void generateYmlPlainTest() throws IOException {
+        String expected =
+                "Property 'chars2' was updated. From [complex value] to false\n"
+                + "Property 'checked' was updated. From false to true\n"
+                + "Property 'default' was updated. From null to [complex value]\n"
+                + "Property 'id' was updated. From 45 to null\n"
+                + "Property 'key1' was removed\n"
+                + "Property 'key2' was added with value: 'value2'\n"
+                + "Property 'numbers2' was updated. From [complex value] to [complex value]\n"
+                + "Property 'numbers3' was removed\n"
+                + "Property 'numbers4' was added with value: [complex value]\n"
+                + "Property 'obj1' was added with value: [complex value]\n"
+                + "Property 'setting1' was updated. From 'Some value' to 'Another value'\n"
+                + "Property 'setting2' was updated. From 200 to 300\n"
+                + "Property 'setting3' was updated. From true to 'none'";
 
-        List<Map<String, Object>> diff = Differ.buildDiff(first, second);
+        String actual = Differ.generate(FILE1_YAML, FILE2_YAML, "plain");
 
-        List<Map<String, Object>> expected = List.of(
-                Map.of("key", "a", "status", "added", "newValue", N1),
-                Map.of("key", "b", "status", "added", "newValue", N2)
-        );
-
-        assertEquals(expected, diff);
+        assertEquals(expected, actual);
     }
 
     @Test
-    void onlyRemoved() {
-        Map<String, Object> first = new HashMap<>();
-        first.put("z", N3);
-        first.put("x", N4);
-        Map<String, Object> second = Map.of();
+    void generateYmlDefaultTest() throws IOException {
+        String expected = "{\n"
+                + "    chars1: [a, b, c]\n"
+                + "  - chars2: [d, e, f]\n"
+                + "  + chars2: false\n"
+                + "  - checked: false\n"
+                + "  + checked: true\n"
+                + "  - default: null\n"
+                + "  + default: [value1, value2]\n"
+                + "  - id: 45\n"
+                + "  + id: null\n"
+                + "  - key1: value1\n"
+                + "  + key2: value2\n"
+                + "    numbers1: [1, 2, 3, 4]\n"
+                + "  - numbers2: [2, 3, 4, 5]\n"
+                + "  + numbers2: [22, 33, 44, 55]\n"
+                + "  - numbers3: [3, 4, 5]\n"
+                + "  + numbers4: [4, 5, 6]\n"
+                + "  + obj1: {nestedKey=value, isNested=true}\n"
+                + "  - setting1: Some value\n"
+                + "  + setting1: Another value\n"
+                + "  - setting2: 200\n"
+                + "  + setting2: 300\n"
+                + "  - setting3: true\n"
+                + "  + setting3: none\n"
+                + "}";
 
-        List<Map<String, Object>> diff = Differ.buildDiff(first, second);
+        String actual = Differ.generate(FILE1_YAML, FILE2_YAML);
 
-        List<Map<String, Object>> expected = List.of(
-                Map.of("key", "x", "status", "removed", "oldValue", N4),
-                Map.of("key", "z", "status", "removed", "oldValue", N3)
-        );
 
-        assertEquals(expected, diff);
+        assertEquals(expected, actual);
     }
 
     @Test
-    void onlyChanged() {
-        Map<String, Object> first = new HashMap<>();
-        first.put("a", "old");
-        first.put("b", N1);
-        first.put("c", null);
+    void generateJsonJsonTest() throws IOException {
+        String expected = readResource("DifferTest_for_json_format.json");
+        String actual = Differ.generate(FILE1_JSON, FILE2_JSON, "json");
 
-        Map<String, Object> second = new HashMap<>();
-        second.put("a", "new");
-        second.put("b", N2);
-        second.put("c", N3);
+        ObjectMapper mapper = new ObjectMapper();
 
-        List<Map<String, Object>> diff = Differ.buildDiff(first, second);
+        JsonNode exp = mapper.readTree(expected);
+        JsonNode act = mapper.readTree(actual);
 
-        Map<String, Object> e1 = new HashMap<>();
-        e1.put("key", "a");
-        e1.put("status", "changed");
-        e1.put("oldValue", "old");
-        e1.put("newValue", "new");
+        assertEquals(exp, act);
+    }
 
-        Map<String, Object> e2 = new HashMap<>();
-        e2.put("key", "b");
-        e2.put("status", "changed");
-        e2.put("oldValue", N1);
-        e2.put("newValue", N2);
+    @Test
+    void generateJsonStylishTest() throws IOException {
+        String expected = "{\n"
+                + "    chars1: [a, b, c]\n"
+                + "  - chars2: [d, e, f]\n"
+                + "  + chars2: false\n"
+                + "  - checked: false\n"
+                + "  + checked: true\n"
+                + "  - default: null\n"
+                + "  + default: [value1, value2]\n"
+                + "  - id: 45\n"
+                + "  + id: null\n"
+                + "  - key1: value1\n"
+                + "  + key2: value2\n"
+                + "    numbers1: [1, 2, 3, 4]\n"
+                + "  - numbers2: [2, 3, 4, 5]\n"
+                + "  + numbers2: [22, 33, 44, 55]\n"
+                + "  - numbers3: [3, 4, 5]\n"
+                + "  + numbers4: [4, 5, 6]\n"
+                + "  + obj1: {nestedKey=value, isNested=true}\n"
+                + "  - setting1: Some value\n"
+                + "  + setting1: Another value\n"
+                + "  - setting2: 200\n"
+                + "  + setting2: 300\n"
+                + "  - setting3: true\n"
+                + "  + setting3: none\n"
+                + "}";
 
-        Map<String, Object> e3 = new HashMap<>();
-        e3.put("key", "c");
-        e3.put("status", "changed");
-        e3.put("oldValue", null);
-        e3.put("newValue", N3);
+        String actual = Differ.generate(FILE1_JSON, FILE2_JSON, "stylish");
 
-        List<Map<String, Object>> expected = List.of(e1, e2, e3);
-        assertEquals(expected, diff);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void generateJsonPlainTest() throws IOException {
+        String expected =
+                "Property 'chars2' was updated. From [complex value] to false\n"
+                        + "Property 'checked' was updated. From false to true\n"
+                        + "Property 'default' was updated. From null to [complex value]\n"
+                        + "Property 'id' was updated. From 45 to null\n"
+                        + "Property 'key1' was removed\n"
+                        + "Property 'key2' was added with value: 'value2'\n"
+                        + "Property 'numbers2' was updated. From [complex value] to [complex value]\n"
+                        + "Property 'numbers3' was removed\n"
+                        + "Property 'numbers4' was added with value: [complex value]\n"
+                        + "Property 'obj1' was added with value: [complex value]\n"
+                        + "Property 'setting1' was updated. From 'Some value' to 'Another value'\n"
+                        + "Property 'setting2' was updated. From 200 to 300\n"
+                        + "Property 'setting3' was updated. From true to 'none'";
+
+        String actual = Differ.generate(FILE1_JSON, FILE2_JSON, "plain");
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void generateJsonDefaultTest() throws IOException {
+        String expected = "{\n"
+                + "    chars1: [a, b, c]\n"
+                + "  - chars2: [d, e, f]\n"
+                + "  + chars2: false\n"
+                + "  - checked: false\n"
+                + "  + checked: true\n"
+                + "  - default: null\n"
+                + "  + default: [value1, value2]\n"
+                + "  - id: 45\n"
+                + "  + id: null\n"
+                + "  - key1: value1\n"
+                + "  + key2: value2\n"
+                + "    numbers1: [1, 2, 3, 4]\n"
+                + "  - numbers2: [2, 3, 4, 5]\n"
+                + "  + numbers2: [22, 33, 44, 55]\n"
+                + "  - numbers3: [3, 4, 5]\n"
+                + "  + numbers4: [4, 5, 6]\n"
+                + "  + obj1: {nestedKey=value, isNested=true}\n"
+                + "  - setting1: Some value\n"
+                + "  + setting1: Another value\n"
+                + "  - setting2: 200\n"
+                + "  + setting2: 300\n"
+                + "  - setting3: true\n"
+                + "  + setting3: none\n"
+                + "}";
+
+        String actual = Differ.generate(FILE1_JSON, FILE2_JSON);
+
+        assertEquals(expected, actual);
     }
 }

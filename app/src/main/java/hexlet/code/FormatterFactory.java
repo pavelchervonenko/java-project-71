@@ -10,7 +10,7 @@ public class FormatterFactory {
             case "stylish", "" -> new StylishFormatter();
             case "plain" -> new PlainFormatter();
             case "json" -> new JsonFormatter();
-            default -> throw new RuntimeException("Unknown format");
+            default -> throw new RuntimeException("Unknown format was transmitted: " + name);
         };
     }
 }

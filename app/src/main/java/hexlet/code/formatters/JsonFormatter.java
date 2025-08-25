@@ -1,37 +1,25 @@
 package hexlet.code.formatters;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import hexlet.code.Formatter;
 
 import java.util.List;
 import java.util.Map;
 
+
 public class JsonFormatter implements Formatter {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper()
+            .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
 
     @Override
     public final String format(List<Map<String, Object>> diff) {
-        ArrayNode root = mapper.createArrayNode();
-
-        for (Map<String, Object> item : diff) {
-            ObjectNode node = mapper.createObjectNode();
-
-            node.put("key", String.valueOf(item.get("key")));
-            node.put("status", String.valueOf(item.get("status")));
-
-            if (item.containsKey("oldValue")) {
-                node.set("oldValue", mapper.valueToTree(item.get("oldValue")));
-            }
-            if (item.containsKey("newValue")) {
-                node.set("newValue", mapper.valueToTree(item.get("newValue")));
-            }
-
-            root.add(node);
+        try {
+            return mapper.writeValueAsString(diff);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Failed to serialize diff to JSON", e);
         }
-
-        return root.toPrettyString();
     }
 }

@@ -1,6 +1,7 @@
 package hexlet.code;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,12 +26,30 @@ public class Differ {
             throw new IllegalArgumentException("File does not exist");
         }
 
-        Map<String, Object> dataFirst = Parser.parse(absolutePath1);
-        Map<String, Object> dataSecond = Parser.parse(absolutePath2);
+        Map<String, Object> dataFirst = readAndParse(absolutePath1);
+        Map<String, Object> dataSecond = readAndParse(absolutePath2);
 
         List<Map<String, Object>> diff = buildDiff(dataFirst, dataSecond);
         Formatter formatter = FormatterFactory.get(format);
         return formatter.format(diff);
+    }
+
+    private static Map<String, Object> readAndParse(Path path) throws IOException {
+        String text = Files.readString(path, StandardCharsets.UTF_8);
+        String format = detectFormat(path);
+        return Parser.parse(text, format);
+    }
+
+    private static String detectFormat(Path path) throws IOException {
+        String name = path.getFileName().toString().toLowerCase();
+
+        if (name.endsWith(".json")) {
+            return "json";
+        } else if (name.endsWith(".yml") || name.endsWith(".yaml")) {
+            return "yaml";
+        } else {
+            throw new IOException("Unsupported file format: " + name);
+        }
     }
 
     public static List<Map<String, Object>> buildDiff(Map<String, Object> dataFirst, Map<String, Object> dataSecond) {

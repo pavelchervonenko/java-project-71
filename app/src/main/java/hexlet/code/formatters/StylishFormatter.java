@@ -29,7 +29,7 @@ public class StylishFormatter implements Formatter {
                     result.append(formatLine("  - ", key, item.get("oldValue")));
                     result.append(formatLine("  + ", key, item.get("newValue")));
                     break;
-                default: throw new RuntimeException("Unknown status");
+                default: throw new RuntimeException("Unknown status in diff. Transmitted status: " + status);
             }
         }
         result.append("}");

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 
+
 public class PlainFormatter implements Formatter {
     @Override
     public final String format(List<Map<String, Object>> diff) {
@@ -21,43 +22,31 @@ public class PlainFormatter implements Formatter {
                 case "unchanged" :
                     break;
                 case "removed" :
-                    lines.add(formatLine(key).trim());
+                    var removed = "Property '"
+                            + key
+                            + "' was removed";
+                    lines.add(removed);
                     break;
                 case "added" :
-                    lines.add(formatLine(key, item.get("newValue")).trim());
+                    var added = "Property '"
+                            + key
+                            + "' was added with value: "
+                            + processingValue(item.get("newValue"));
+                    lines.add(added);
                     break;
                 case "changed" :
-                    lines.add(formatLine(key, item.get("oldValue"), item.get("newValue")).trim());
+                    var changed = "Property '"
+                            + key
+                            + "' was updated. From "
+                            + processingValue(item.get("oldValue"))
+                            + " to "
+                            + processingValue(item.get("newValue"));
+                    lines.add(changed);
                     break;
-                default: throw new RuntimeException("Unknown status");
+                default: throw new RuntimeException("Unknown status in diff. Transmitted status: " + status);
             }
         }
         return String.join("\n", lines);
-    }
-
-    private String formatLine(Object key) {
-        return "Property "
-                + createQuotationMarks(key)
-                + " was removed"
-                + "\n";
-    }
-
-    private String formatLine(Object key, Object value) {
-        return "Property "
-                + createQuotationMarks(key)
-                + " was added with value: "
-                + processingValue(value)
-                + "\n";
-    }
-
-    private String formatLine(Object key, Object oldValue, Object newValue) {
-        return "Property "
-                + createQuotationMarks(key)
-                + " was updated. From "
-                + processingValue(oldValue)
-                + " to "
-                + processingValue(newValue)
-                + "\n";
     }
 
     private String processingValue(Object obj) {
@@ -65,15 +54,13 @@ public class PlainFormatter implements Formatter {
             return "null";
         }
         if (obj instanceof String) {
-            return createQuotationMarks(obj);
+            return "'" + obj + "'";
         }
-        if (obj instanceof Number || obj instanceof Boolean) {
-            return obj.toString();
+        if (obj instanceof Map<?, ?>
+                || obj instanceof Iterable<?>
+                || obj.getClass().isArray()) {
+            return "[complex value]";
         }
-        return "[complex value]";
-    }
-
-    private String createQuotationMarks(Object value) {
-        return "'" + value + "'";
+        return String.valueOf(obj);
     }
 }
